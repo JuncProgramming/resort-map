@@ -1,121 +1,94 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useEffect, useState } from 'react'
+import ResortMap from '@/components/ResortMap'
+import BookingModal from '@/components/BookingModal'
+import NotificationToast from '@/components/NotificationToast'
+import type { BookingEntry, Coordinates } from '@/types'
+import { fetchMap } from '@/api'
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [mapGrid, setMapGrid] = useState<string[][]>([]) // [[row], [row], [row]]
+  const [bookedCabanas, setBookedCabanas] = useState<string[]>([]) // []
+  const [error, setError] = useState('')
+  const [bookingTarget, setBookingTarget] = useState<Coordinates | null>(null)
+  const [notice, setNotice] = useState<string | null>(null)
+
+  const fetchMapData = async () => {
+    try {
+      const data = await fetchMap()
+
+      setMapGrid(data.mapGrid)
+      const bookedKeys = data.bookedCabanas.map(
+        (entry: BookingEntry) => entry[0]
+      )
+      setBookedCabanas(bookedKeys)
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message)
+      }
+    }
+  }
+
+  useEffect(() => {
+    fetchMapData()
+  }, [])
+
+  useEffect(() => {
+    if (!notice) return
+
+    const timeoutId = window.setTimeout(() => {
+      setNotice(null)
+    }, 3000)
+
+    return () => window.clearTimeout(timeoutId)
+  }, [notice])
+
+  const handleCabanaClick = (
+    rowIndex: number,
+    colIndex: number,
+    isBooked: boolean
+  ) => {
+    if (isBooked) {
+      setNotice('This cabana is already booked!')
+      return
+    }
+    setNotice(null)
+    setBookingTarget({ rowIndex, colIndex })
+  }
+
+  const handleBookingSuccess = () => {
+    setBookingTarget(null)
+    setNotice('Reserved successfully!')
+    fetchMapData()
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="flex min-h-screen flex-col items-center bg-slate-50 p-8 text-slate-900">
+      {notice && (
+        <NotificationToast message={notice} onClose={() => setNotice(null)} />
+      )}
 
-      <div className="ticks"></div>
+      <header className="mb-8 text-center">
+        <h1 className="text-4xl font-bold">Journey Resort</h1>
+      </header>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      {error && <div className="mb-4 font-semibold text-red-600">{error}</div>}
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+      <main className="flex w-full max-w-5xl justify-center">
+        <ResortMap
+          grid={mapGrid}
+          bookedCabanas={bookedCabanas}
+          onCabanaClick={handleCabanaClick}
+        />
+      </main>
+
+      {bookingTarget && (
+        <BookingModal
+          rowIndex={bookingTarget.rowIndex}
+          colIndex={bookingTarget.colIndex}
+          onClose={() => setBookingTarget(null)}
+          onSuccess={handleBookingSuccess}
+        />
+      )}
+    </div>
   )
 }
-
-export default App
