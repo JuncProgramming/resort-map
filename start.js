@@ -13,13 +13,60 @@ const getOptionValue = (optionName) => {
   return optionValue
 }
 
-const positionalArgs = args.filter((arg) => !arg.startsWith('--'))
-const positionalMapArg = positionalArgs[0]
-const positionalBookingsArg = positionalArgs[1]
+const normalizeNpmConfigValue = (value) => {
+  if (value === undefined || value === 'true') {
+    return undefined
+  }
 
-const mapArg = getOptionValue('--map') ?? positionalMapArg ?? 'map.ascii'
-const bookingsArg =
-  getOptionValue('--bookings') ?? positionalBookingsArg ?? 'bookings.json'
+  return value
+}
+
+const positionalArgs = args.filter((arg) => !arg.startsWith('--'))
+const explicitMapArg = getOptionValue('--map')
+const explicitBookingsArg = getOptionValue('--bookings')
+
+const mapFromNpmConfig = normalizeNpmConfigValue(process.env.npm_config_map)
+const bookingsFromNpmConfig = normalizeNpmConfigValue(
+  process.env.npm_config_bookings
+)
+
+const hasMapFlag =
+  explicitMapArg !== undefined || process.env.npm_config_map !== undefined
+const hasBookingsFlag =
+  explicitBookingsArg !== undefined ||
+  process.env.npm_config_bookings !== undefined
+const hasExplicitFlags = args.includes('--map') || args.includes('--bookings')
+
+let mapArgCandidate = explicitMapArg ?? mapFromNpmConfig
+let bookingsArgCandidate = explicitBookingsArg ?? bookingsFromNpmConfig
+
+if (positionalArgs.length > 0) {
+  if (!hasExplicitFlags) {
+    if (positionalArgs.length >= 2) {
+      // npm can strip unknown flags and pass only positional values.
+      mapArgCandidate = positionalArgs[0]
+      bookingsArgCandidate = positionalArgs[1]
+    } else if (hasBookingsFlag && !hasMapFlag) {
+      bookingsArgCandidate = bookingsArgCandidate ?? positionalArgs[0]
+    } else {
+      mapArgCandidate = mapArgCandidate ?? positionalArgs[0]
+    }
+  } else if (hasMapFlag && !hasBookingsFlag && mapArgCandidate === undefined) {
+    mapArgCandidate = positionalArgs[0]
+  } else if (
+    hasBookingsFlag &&
+    !hasMapFlag &&
+    bookingsArgCandidate === undefined
+  ) {
+    bookingsArgCandidate = positionalArgs[0]
+  } else {
+    mapArgCandidate = mapArgCandidate ?? positionalArgs[0]
+    bookingsArgCandidate = bookingsArgCandidate ?? positionalArgs[1]
+  }
+}
+
+const mapArg = mapArgCandidate ?? 'map.ascii'
+const bookingsArg = bookingsArgCandidate ?? 'bookings.json'
 
 const mapPath = path.isAbsolute(mapArg)
   ? mapArg

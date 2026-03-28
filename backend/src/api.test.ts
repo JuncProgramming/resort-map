@@ -3,6 +3,38 @@ import request from 'supertest'
 import app from './index.js'
 import { state } from './state.js'
 
+describe('GET /api/map', () => {
+  beforeEach(() => {
+    state.mapGrid = [
+      ['W', '.', 'p'],
+      ['.', 'W', 'c']
+    ]
+    state.bookedCabanas = new Map()
+  })
+
+  it('should return map grid and booked cabanas with a 200 code', async () => {
+    const res = await request(app).get('/api/map')
+
+    expect(res.status).toBe(200)
+    expect(res.body).toEqual({
+      mapGrid: state.mapGrid,
+      bookedCabanas: []
+    })
+  })
+
+  it('should return reserved cabanas in the response payload', async () => {
+    state.bookedCabanas.set('1,1', { room: '101', guestName: 'Alice Smith' })
+
+    const res = await request(app).get('/api/map')
+
+    expect(res.status).toBe(200)
+    expect(res.body.bookedCabanas).toContainEqual([
+      '1,1',
+      { room: '101', guestName: 'Alice Smith' }
+    ])
+  })
+})
+
 describe('POST /api/book (Booking Logic)', () => {
   beforeEach(() => {
     state.mapGrid = [
@@ -58,5 +90,19 @@ describe('POST /api/book (Booking Logic)', () => {
 
     expect(res.status).toBe(409)
     expect(res.body).toHaveProperty('error')
+  })
+
+  it('should return the newly booked cabana in GET /api/map', async () => {
+    await request(app)
+      .post('/api/book')
+      .send({ rowIndex: 0, colIndex: 0, room: '101', guestName: 'Alice Smith' })
+
+    const mapRes = await request(app).get('/api/map')
+
+    expect(mapRes.status).toBe(200)
+    expect(mapRes.body.bookedCabanas).toContainEqual([
+      '0,0',
+      { room: '101', guestName: 'Alice Smith' }
+    ])
   })
 })

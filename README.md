@@ -43,11 +43,20 @@ Example:
 npm run start -- --map ./map.ascii --bookings ./bookings.json
 ```
 
+Single-option examples:
+
+```
+npm run start -- --map ./map.ascii
+npm run start -- --bookings ./bookings.json
+```
+
 The application will be available at:
 
 Frontend: http://localhost:5173
 
 Backend API: http://localhost:3000
+
+Frontend API base URL is configurable with `VITE_API_URL` (defaults to `http://localhost:3000/api`).
 
 ---
 
