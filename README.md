@@ -2,6 +2,8 @@
 
 A full-stack web application designed for visualizing a resort map and managing cabana reservations. Built with React, Node.js (Express), and TypeScript.
 
+<img width="1919" height="912" alt="Screenshot" src="https://github.com/user-attachments/assets/e5935630-2da7-44de-ab86-fbaba01b77af" />
+
 ---
 
 ## Quick Start
@@ -105,4 +107,3 @@ npm run test
 - No express router: I decided to put all of the backend logic (besides state) in the index.js file instead of creating a seperate routes and controllers folders and files. For a project this size (with 2 API methods) this would be an overkill.
 
 - No centralized backend types file: as there are very little types in the backend, there is no need for a types.ts file for the backend. What could be done is a single types.ts file for both the frontend and backend, but this is just one way to do that.
-
