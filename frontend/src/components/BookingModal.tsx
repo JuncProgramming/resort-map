@@ -37,12 +37,12 @@ export function BookingModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-2 backdrop-blur-sm sm:items-center sm:p-4"
       onClick={handleBackdropClick}
       data-testid="modal-backdrop"
     >
-      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
-        <h2 className="mb-4 text-2xl font-bold text-slate-800">
+      <div className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-4 shadow-2xl sm:p-6">
+        <h2 className="mb-4 text-xl font-bold text-slate-800 sm:text-2xl">
           Cabana reservation
         </h2>
 
@@ -89,11 +89,11 @@ export function BookingModal({
             />
           </div>
 
-          <div className="mt-4 flex justify-end gap-3">
+          <div className="mt-4 flex flex-col-reverse justify-end gap-3 sm:flex-row">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg bg-slate-200 px-4 py-2 font-medium text-slate-600 transition-colors hover:bg-slate-300"
+              className="w-full rounded-lg bg-slate-200 px-4 py-2 font-medium text-slate-600 transition-colors hover:bg-slate-300 sm:w-auto"
               disabled={isLoading}
             >
               Cancel
@@ -101,7 +101,7 @@ export function BookingModal({
             <button
               type="submit"
               disabled={isLoading}
-              className="rounded-lg bg-amber-500 px-4 py-2 font-medium text-white transition-colors hover:bg-amber-600 disabled:opacity-50"
+              className="w-full rounded-lg bg-amber-500 px-4 py-2 font-medium text-white transition-colors hover:bg-amber-600 disabled:opacity-50 sm:w-auto"
             >
               {isLoading ? 'Reserving...' : 'Reserve'}
             </button>

@@ -163,7 +163,7 @@ const ResortMap = ({ grid, bookedCabanas, onCabanaClick }: ResortMapProps) => {
     return (
       <div
         key={`${rowIndex}-${colIndex}`}
-        className="relative box-border flex h-10 w-10 items-center justify-center overflow-hidden"
+        className="relative box-border flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden"
         data-testid="tile"
         onClick={() => {
           if (isCabana) {
@@ -178,7 +178,7 @@ const ResortMap = ({ grid, bookedCabanas, onCabanaClick }: ResortMapProps) => {
 
   return (
     <div
-      className="rounded-2xl border-4 border-amber-300 bg-amber-50 bg-cover bg-center bg-no-repeat"
+      className="inline-block overflow-hidden rounded-2xl border-4 border-amber-300 bg-amber-50 bg-cover bg-center bg-no-repeat"
       data-testid="map-container"
       style={{ backgroundImage: "url('/assets/parchmentBasic.png')" }}
     >

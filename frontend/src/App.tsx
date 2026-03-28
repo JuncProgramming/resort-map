@@ -62,24 +62,35 @@ export default function App() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center bg-slate-50 p-8 text-slate-900">
+    <div className="flex min-h-screen flex-col items-center bg-slate-50 px-3 py-4 text-slate-900 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
       {notice && (
         <NotificationToast message={notice} onClose={() => setNotice(null)} />
       )}
 
-      <header className="mb-8 text-center">
-        <h1 className="text-4xl font-bold">Journey Resort</h1>
+      <header className="mb-2 text-center sm:mb-6 lg:mb-8">
+        <h1 className="text-2xl font-bold sm:text-3xl lg:text-4xl">
+          Journey Resort
+        </h1>
       </header>
 
       {error && <div className="mb-4 font-semibold text-red-600">{error}</div>}
 
-      <main className="flex w-full max-w-5xl justify-center">
-        <ResortMap
-          grid={mapGrid}
-          bookedCabanas={bookedCabanas}
-          onCabanaClick={handleCabanaClick}
-        />
-      </main>
+      {!error && (
+        <main className="w-full max-w-full lg:max-w-6xl">
+          <p className="mb-4 text-center text-xs font-medium text-slate-500 sm:hidden">
+            Swipe horizontally to explore the full map
+          </p>
+          <div className="w-full touch-pan-x overflow-x-auto pb-2">
+            <div className="mx-auto w-fit min-w-full sm:min-w-0">
+              <ResortMap
+                grid={mapGrid}
+                bookedCabanas={bookedCabanas}
+                onCabanaClick={handleCabanaClick}
+              />
+            </div>
+          </div>
+        </main>
+      )}
 
       {bookingTarget && (
         <BookingModal

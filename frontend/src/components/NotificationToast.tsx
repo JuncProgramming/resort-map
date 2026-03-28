@@ -5,10 +5,10 @@ export default function NotificationToast({
   onClose
 }: NotificationToastProps) {
   return (
-    <div className="fixed top-4 left-1/2 z-10 w-full max-w-lg -translate-x-1/2 px-4 sm:top-6">
+    <div className="fixed top-6 left-1/2 z-10 w-full max-w-lg -translate-x-1/2 px-4">
       <div className="rounded-xl border border-slate-200 bg-white px-6 py-4 text-sm font-semibold text-slate-800 shadow-md">
         <div className="flex items-center justify-between gap-4">
-          <p>{message}</p>
+          <p className="min-w-0 flex-1 wrap-break-word">{message}</p>
           {onClose && (
             <button
               onClick={onClose}
