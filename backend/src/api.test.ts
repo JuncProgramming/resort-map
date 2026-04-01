@@ -28,10 +28,16 @@ describe('GET /api/map', () => {
     const res = await request(app).get('/api/map')
 
     expect(res.status).toBe(200)
-    expect(res.body.bookedCabanas).toContainEqual([
-      '1,1',
-      { room: '101', guestName: 'Alice Smith' }
-    ])
+    expect(res.body.bookedCabanas).toContain('1,1')
+  })
+
+  it('should not expose guest reservation details in map payload', async () => {
+    state.bookedCabanas.set('1,1', { room: '101', guestName: 'Alice Smith' })
+
+    const res = await request(app).get('/api/map')
+
+    expect(res.status).toBe(200)
+    expect(res.body.bookedCabanas).toEqual(['1,1'])
   })
 })
 
@@ -52,6 +58,18 @@ describe('POST /api/book (Booking Logic)', () => {
 
     expect(res.status).toBe(400)
     expect(res.body).toHaveProperty('error')
+  })
+
+  it('should reject request with non-integer coordinates with a 400 code', async () => {
+    const res = await request(app).post('/api/book').send({
+      rowIndex: '0',
+      colIndex: 0,
+      room: '101',
+      guestName: 'Alice Smith'
+    })
+
+    expect(res.status).toBe(400)
+    expect(res.body.error).toBe('Invalid cabana coordinates')
   })
 
   it('should reject booking for invalid coordinates with a 400 code', async () => {
@@ -100,9 +118,6 @@ describe('POST /api/book (Booking Logic)', () => {
     const mapRes = await request(app).get('/api/map')
 
     expect(mapRes.status).toBe(200)
-    expect(mapRes.body.bookedCabanas).toContainEqual([
-      '0,0',
-      { room: '101', guestName: 'Alice Smith' }
-    ])
+    expect(mapRes.body.bookedCabanas).toContain('0,0')
   })
 })

@@ -1,9 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { parseArgs } from 'node:util'
-
-export type Guest = { room: string; guestName: string }
-export type BookingRecord = { room: string; guestName: string }
+import type { BookingRecord, Guest } from './types.js'
 
 export const state = {
   mapGrid: [] as string[][],
