@@ -98,12 +98,10 @@ npm run test
 
 - Tests in the same folder as components: Test files are placed directly alongside their respective implementation files (e.g., ResortMap.test.tsx next to ResortMap.tsx) rather than in a disconnected **tests** or directory. For a project of this scale this is also ok.
 
-- Centralized frontend types file: all types are kept in a single types.ts file rather than being scattered or defined inline across components. This makes it easier to debug and easier to develop the app.
+- Centralized frontend and backend types files: all types are kept in types.ts files rather than being scattered or defined inline across components. This makes it easier to debug and easier to develop the app. They could be joined to a single file or stay seperate.
 
 - Minimal asset footprint: Skipped purely cosmetic changes, such as replacing the default Vite favicon. Adding extra static assets that don't contribute to the core business logic (the map visualization and booking flow) was intentionally avoided to stay strictly focused on the core requirements.
 
 - Functions placed in component files: the utility functions are placed in the component files that are using them directly. Decided that placing them this way would be better than creating a utils.ts file, as the number of the functions is really small. Creating an utils.ts file would be better for seperation of concerns and later development, but for a project this size, the current approach is sufficient.
 
 - No express router: I decided to put all of the backend logic (besides state) in the index.js file instead of creating a seperate routes and controllers folders and files. For a project this size (with 2 API methods) this would be an overkill.
-
-- No centralized backend types file: as there are very little types in the backend, there is no need for a types.ts file for the backend. What could be done is a single types.ts file for both the frontend and backend, but this is just one way to do that.
