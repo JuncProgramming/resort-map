@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import ResortMap from '@/components/ResortMap'
 import BookingModal from '@/components/BookingModal'
 import NotificationToast from '@/components/NotificationToast'
-import type { BookingEntry, Coordinates } from '@/types'
+import type { Coordinates } from '@/types'
 import { fetchMap } from '@/api'
 
 export default function App() {
@@ -17,10 +17,7 @@ export default function App() {
       const data = await fetchMap()
 
       setMapGrid(data.mapGrid)
-      const bookedKeys = data.bookedCabanas.map(
-        (entry: BookingEntry) => entry[0]
-      )
-      setBookedCabanas(bookedKeys)
+      setBookedCabanas(data.bookedCabanas)
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message)

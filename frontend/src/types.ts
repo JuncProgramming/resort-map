@@ -11,7 +11,10 @@ export type BookingModalProps = {
   onSuccess: () => void
 }
 
-export type BookingEntry = [string, { room: string; guestName: string }]
+export type MapSnapshot = {
+  mapGrid: string[][]
+  bookedCabanas: string[]
+}
 
 export type BookingRequest = {
   rowIndex: number

@@ -1,14 +1,14 @@
-import type { BookingRequest } from './types'
+import type { BookingRequest, MapSnapshot } from './types'
 
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3000/api')
   .replace(/\/+$/, '')
 
-export async function fetchMap() {
+export async function fetchMap(): Promise<MapSnapshot> {
   const res = await fetch(`${API_URL}/map`)
   if (!res.ok) {
     throw new Error('Could not load the map data')
   }
-  return res.json()
+  return (await res.json()) as MapSnapshot
 }
 
 export async function bookCabana(payload: BookingRequest) {

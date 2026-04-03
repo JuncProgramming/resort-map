@@ -16,13 +16,7 @@ const ResortMap = ({ grid, bookedCabanas, onCabanaClick }: ResortMapProps) => {
       south: isPath(rowIndex + 1, colIndex),
       west: isPath(rowIndex, colIndex - 1)
     }
-
-    const chaletNeighbors = {
-      north: isChalet(rowIndex - 1, colIndex),
-      east: isChalet(rowIndex, colIndex + 1),
-      south: isChalet(rowIndex + 1, colIndex),
-      west: isChalet(rowIndex, colIndex - 1)
-    }
+    const chaletNorthNeighbor = isChalet(rowIndex - 1, colIndex)
 
     const allPathConnections = { ...pathConnections } // all connections include the paths to homes
     const pathNeighborCount =
@@ -30,7 +24,7 @@ const ResortMap = ({ grid, bookedCabanas, onCabanaClick }: ResortMapProps) => {
 
     // Homes only connect from the north side, and only when the road already continues.
     if (
-      chaletNeighbors.north &&
+      chaletNorthNeighbor &&
       !pathConnections.north &&
       pathNeighborCount > 0
     ) {
